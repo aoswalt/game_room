@@ -76,6 +76,7 @@ defmodule GameRoom.Game.TicTacToe do
       {{p, _, _}, {_, p, _}, {_, _, p}} -> p
       {{_, _, p}, {_, p, _}, {p, _, _}} -> p
       _ -> nil
+      # draw?
     end
   end
 
