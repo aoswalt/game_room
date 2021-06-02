@@ -6,6 +6,26 @@ defmodule GameRoom do
   Contexts are also responsible for managing your data, regardless
   if it comes from the database, an external API or others.
   """
+
+  if Mix.env() == :dev do
+    # NOTE(adam): Phoneix CodeReloader nukes protocols when reloading, so workaround
+    def list_games() do
+      {:ok, modules} = :application.get_key(:game_room, :modules)
+
+      modules
+      |> Enum.map(&Atom.to_string/1)
+      |> Enum.filter(&(&1 =~ ~r/Elixir.GameRoom.Game.\w+$/))
+      |> Enum.map(&String.to_existing_atom/1)
+    end
+  else
+    def list_games() do
+      {:consolidated, impls} = GameRoom.Game.__protocol__(:impls)
+
+      impls
+
+      # Enum.flat_map(impls, & &1.values(all?: true))
+    end
+  end
 end
 
 # 2 pages: lobby & game
