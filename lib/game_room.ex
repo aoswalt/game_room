@@ -7,19 +7,7 @@ defmodule GameRoom do
   if it comes from the database, an external API or others.
   """
 
-  def storage() do
-    alias GameRoom.Game.TicTacToe, as: TTT
-    alias GameRoom.Player, as: P
-
-    %{
-      1 => TTT.new(%P{id: 1}),
-      2 => TTT.new(%P{id: 2}) |> GameRoom.Game.add_player(%P{id: 3}),
-      3 => TTT.new(%P{id: 4}) |> GameRoom.Game.add_player(%P{id: 5}),
-      4 => TTT.new(%P{id: 6})
-    }
-  end
-
-  def list_lobby_games(get_storage \\ &storage/0) do
+  def list_lobby_games(get_storage \\ &GameRoom.Games.list_games/0) do
     modules = list_game_modules()
     games = get_storage.() |> Map.values() |> Enum.group_by(& &1.__struct__)
 

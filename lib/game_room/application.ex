@@ -12,9 +12,10 @@ defmodule GameRoom.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: GameRoom.PubSub},
       # Start the Endpoint (http/https)
-      GameRoomWeb.Endpoint
+      GameRoomWeb.Endpoint,
       # Start a worker by calling: GameRoom.Worker.start_link(arg)
       # {GameRoom.Worker, arg}
+      GameRoom.Games
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
