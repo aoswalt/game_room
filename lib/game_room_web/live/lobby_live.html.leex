@@ -1,6 +1,6 @@
 <div>
-  <%= for game <- GameRoom.list_games() do %>
-    <p><%= game %></p>
+  <%= for game <- GameRoom.list_lobby_games() do %>
+    <p><%= game.display_name %> | <%= game.player_count %> | <%= game.module_name %></p>
   <% end %>
 </div>
 

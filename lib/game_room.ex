@@ -1,3 +1,7 @@
+defmodule GameRoom.Player do
+  defstruct [:id]
+end
+
 defmodule GameRoom do
   @moduledoc """
   GameRoom keeps the contexts that define your domain
@@ -7,9 +11,35 @@ defmodule GameRoom do
   if it comes from the database, an external API or others.
   """
 
+  def storage() do
+    alias GameRoom.Game.TicTacToe, as: TTT
+    alias GameRoom.Player, as: P
+
+    %{
+      1 => TTT.new(%P{id: 1}),
+      2 => TTT.new(%P{id: 2}) |> GameRoom.Game.add_player(%P{id: 3}),
+      3 => TTT.new(%P{id: 4}) |> GameRoom.Game.add_player(%P{id: 5}),
+      4 => TTT.new(%P{id: 6})
+    }
+  end
+
+  def list_lobby_games(get_storage \\ &storage/0) do
+    modules = list_game_modules()
+    games = get_storage.() |> Map.values() |> Enum.group_by(& &1.__struct__)
+
+    player_count = fn mod ->
+      games |> Map.get(mod, []) |> Enum.flat_map(&GameRoom.Game.players/1) |> length()
+    end
+
+    Enum.map(
+      modules,
+      &%{display_name: &1.display_name, player_count: player_count.(&1), module_name: &1}
+    )
+  end
+
   if Mix.env() == :dev do
     # NOTE(adam): Phoneix CodeReloader nukes protocols when reloading, so workaround
-    def list_games() do
+    def list_game_modules() do
       {:ok, modules} = :application.get_key(:game_room, :modules)
 
       modules
@@ -18,7 +48,7 @@ defmodule GameRoom do
       |> Enum.map(&String.to_existing_atom/1)
     end
   else
-    def list_games() do
+    def list_game_modules() do
       {:consolidated, impls} = GameRoom.Game.__protocol__(:impls)
 
       impls
@@ -35,10 +65,6 @@ end
 
 # game: logic & protocol
 # room genserver: game data state & interaction
-
-defmodule GameRoom.Player do
-  defstruct [:id]
-end
 
 defprotocol GameRoom.Game do
   alias GameRoom.Player
@@ -64,6 +90,11 @@ defmodule GameRoom.NewGame do
   Create a new instance of a game, given a player.
   """
   @callback new(Player.t()) :: Game.t()
+
+  @doc """
+  Get the UI-friendly display name for a game.
+  """
+  @callback display_name() :: String.t()
 end
 
 defmodule GameRoom.Game.TicTacToe do
@@ -83,20 +114,40 @@ defmodule GameRoom.Game.TicTacToe do
   @impl GameRoom.NewGame
   def new(%Player{} = p), do: %TicTacToe{x: p}
 
+  @impl GameRoom.NewGame
+  def display_name(), do: "Tic Tac Toe"
+
   @doc false
   # draw?
   def victor(%{board: board}) do
     case board do
-      {{p, p, p}, _, _} -> p
-      {_, {p, p, p}, _} -> p
-      {_, _, {p, p, p}} -> p
-      {{p, _, _}, {p, _, _}, {p, _, _}} -> p
-      {{_, p, _}, {_, p, _}, {_, p, _}} -> p
-      {{_, _, p}, {_, _, p}, {_, _, p}} -> p
-      {{p, _, _}, {_, p, _}, {_, _, p}} -> p
-      {{_, _, p}, {_, p, _}, {p, _, _}} -> p
-      _ -> nil
-      # draw?
+      {{p, p, p}, _, _} ->
+        p
+
+      {_, {p, p, p}, _} ->
+        p
+
+      {_, _, {p, p, p}} ->
+        p
+
+      {{p, _, _}, {p, _, _}, {p, _, _}} ->
+        p
+
+      {{_, p, _}, {_, p, _}, {_, p, _}} ->
+        p
+
+      {{_, _, p}, {_, _, p}, {_, _, p}} ->
+        p
+
+      {{p, _, _}, {_, p, _}, {_, _, p}} ->
+        p
+
+      {{_, _, p}, {_, p, _}, {p, _, _}} ->
+        p
+
+      _ ->
+        nil
+        # draw?
     end
   end
 
