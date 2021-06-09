@@ -82,7 +82,7 @@ defprotocol GameRoom.Game do
   def take_action(game, player, action)
 end
 
-defmodule GameRoom.NewGame do
+defmodule GameRoom.Definition do
   alias GameRoom.Game
   alias GameRoom.Player
 
@@ -101,7 +101,7 @@ defmodule GameRoom.Game.TicTacToe do
   alias __MODULE__
   alias GameRoom.Player
 
-  @behaviour GameRoom.NewGame
+  @behaviour GameRoom.Definition
 
   @board {
     {nil, nil, nil},
@@ -111,10 +111,10 @@ defmodule GameRoom.Game.TicTacToe do
 
   defstruct [:x, :o, board: @board]
 
-  @impl GameRoom.NewGame
+  @impl GameRoom.Definition
   def new(%Player{} = p), do: %TicTacToe{x: p}
 
-  @impl GameRoom.NewGame
+  @impl GameRoom.Definition
   def display_name(), do: "Tic Tac Toe"
 
   @doc false
