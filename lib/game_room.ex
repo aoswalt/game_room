@@ -7,17 +7,13 @@ defmodule GameRoom do
   if it comes from the database, an external API or others.
   """
 
-  def list_lobby_games(get_storage \\ &GameRoom.Games.list_games/0) do
+  def list_lobby_games(get_player_counts \\ &GameRoom.Games.list_player_counts/0) do
     modules = list_game_modules()
-    games = get_storage.() |> Map.values() |> Enum.group_by(& &1.__struct__)
-
-    player_count = fn mod ->
-      games |> Map.get(mod, []) |> Enum.flat_map(&GameRoom.Game.players/1) |> length()
-    end
+    games = get_player_counts.()
 
     Enum.map(
       modules,
-      &%{display_name: &1.display_name, player_count: player_count.(&1), module_name: &1}
+      &%{display_name: &1.display_name, player_count: games[&1] || 0, module_name: &1}
     )
   end
 
@@ -28,7 +24,7 @@ defmodule GameRoom do
 
       modules
       |> Enum.map(&Atom.to_string/1)
-      |> Enum.filter(&(&1 =~ ~r/Elixir.GameRoom.Game.\w+$/))
+      |> Enum.filter(&(&1 =~ ~r/Elixir\.GameRoom\.Game\.\w+$/))
       |> Enum.map(&String.to_existing_atom/1)
     end
   else

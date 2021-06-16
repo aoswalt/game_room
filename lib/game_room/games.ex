@@ -1,34 +1,12 @@
 defmodule GameRoom.Games do
-  use GenServer
-
-  # probably separate out into genserver per game instance
-
-  def start_link(_) do
-    alias GameRoom.Game.TicTacToe, as: TTT
-    alias GameRoom.Player, as: P
-
-    init = %{
-      1 => TTT.new(%P{id: 1}),
-      2 => TTT.new(%P{id: 2}) |> GameRoom.Game.add_player(%P{id: 3}),
-      3 => TTT.new(%P{id: 4}) |> GameRoom.Game.add_player(%P{id: 5}),
-      4 => TTT.new(%P{id: 6})
-    }
-
-    GenServer.start_link(__MODULE__, init, name: :games)
-  end
-
-  def list_games() do
-    GenServer.call(:games, :list_games)
-  end
-
-  @impl true
-  def init(state) do
-
-    {:ok, state}
-  end
-
-  @impl true
-  def handle_call(:list_games, _, state) do
-    {:reply, state, state}
+  def list_player_counts() do
+    Registry.select(GameRegistry, [{{:"$1", :"$2", :"$3"}, [], [{{:"$1", :"$2", :"$3"}}]}])
+    |> Task.async_stream(fn {{module, _id}, pid, _} ->
+      count = GenServer.call(pid, :player_count)
+      {module, count}
+    end)
+    |> Enum.reduce(%{}, fn {:ok, {module, count}}, games ->
+      Map.update(games, module, count, &(&1 + count))
+    end)
   end
 end

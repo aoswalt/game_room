@@ -15,7 +15,7 @@ defmodule GameRoom.Application do
       GameRoomWeb.Endpoint,
       # Start a worker by calling: GameRoom.Worker.start_link(arg)
       # {GameRoom.Worker, arg}
-      GameRoom.Games
+      {Registry, keys: :unique, name: GameRegistry}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
