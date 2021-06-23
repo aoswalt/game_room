@@ -1,9 +1,12 @@
 defmodule GameRoomWeb.Router do
   use GameRoomWeb, :router
 
+  alias GameRoomWeb.Plugs.UserId
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+    plug UserId
     plug :fetch_live_flash
     plug :put_root_layout, {GameRoomWeb.LayoutView, :root}
     plug :protect_from_forgery

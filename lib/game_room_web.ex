@@ -48,6 +48,8 @@ defmodule GameRoomWeb do
         layout: {GameRoomWeb.LayoutView, "live.html"}
 
       unquote(view_helpers())
+
+      import GameRoomWeb.LiveHelpers
     end
   end
 

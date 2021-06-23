@@ -2,8 +2,8 @@ defmodule GameRoomWeb.LobbyLive do
   use GameRoomWeb, :live_view
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, query: "", results: %{})}
+  def mount(_params, session, socket) do
+    {:ok, assign_defaults(session, socket)}
   end
 
   @impl true
