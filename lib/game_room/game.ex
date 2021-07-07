@@ -1,7 +1,7 @@
 defprotocol GameRoom.Game do
   alias GameRoom.Player
 
-  @spec add_player(t(), Player.t()) :: t()
+  @spec add_player(t(), Player.t()) :: {:open | :full, t()}
   def add_player(game, player)
 
   @spec remove_player(t(), Player.t()) :: t() | :empty

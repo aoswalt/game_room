@@ -54,10 +54,14 @@ defmodule GameRoom.Game.TicTacToe do
 
   defimpl GameRoom.Game do
     def add_player(%TicTacToe{} = game, %Player{} = p) do
-      case game do
-        %{x: nil, o: o} = game when not is_nil(o) and o != p -> %{game | x: p}
-        %{x: x, o: nil} = game when not is_nil(x) and x != p -> %{game | o: p}
-      end
+      game =
+        case game do
+          %{x: nil, o: o} = game when not is_nil(o) and o != p -> %{game | x: p}
+          %{x: x, o: nil} = game when not is_nil(x) and x != p -> %{game | o: p}
+          _ -> raise "Game is already full"
+        end
+
+      {:full, game}
     end
 
     def remove_player(%TicTacToe{} = game, %Player{} = p) do

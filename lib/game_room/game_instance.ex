@@ -3,13 +3,15 @@ defmodule GameRoom.GameInstance do
 
   alias GameRoom.Game
 
-  def start_link({game_type, id}) do
+  def start_link({_game_type, _id} = key) do
     alias GameRoom.Game.TicTacToe, as: TTT
     alias GameRoom.Player, as: P
 
-    init = TTT.new(%P{id: 2}) |> GameRoom.Game.add_player(%P{id: 3})
+    init = TTT.new(%P{id: 100})
 
-    GenServer.start_link(__MODULE__, init, name: {:via, Registry, {GameRegistry, {game_type, id}}})
+    via = {GameRegistry, key, :open}
+    name = {:via, Registry, via}
+    GenServer.start_link(__MODULE__, {key, init}, name: name)
   end
 
   @impl true
@@ -19,12 +21,19 @@ defmodule GameRoom.GameInstance do
   end
 
   @impl true
-  def handle_call(:players, _, state) do
-    {:reply, Game.players(state), state}
+  def handle_call(:players, _, {_, game} = state) do
+    {:reply, Game.players(game), state}
   end
 
   @impl true
-  def handle_call(:player_count, _, state) do
-    {:reply, Game.players(state) |> length(), state}
+  def handle_call(:player_count, _, {_, game} = state) do
+    {:reply, Game.players(game) |> length(), state}
+  end
+
+  @impl true
+  def handle_call({:add_player, player}, _, {key, game}) do
+    {status, game} = GameRoom.Game.add_player(game, player)
+    Registry.update_value(GameRegistry, key, fn _ -> status end)
+    {:reply, game, {key, game}}
   end
 end

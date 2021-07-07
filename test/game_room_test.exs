@@ -24,19 +24,27 @@ defmodule GameRoom.Game.TicTacToeTest do
   end
 
   test "added player is listed", %{p2: p2, game: game} do
-    game = Game.add_player(game, p2)
+    {_, game} = Game.add_player(game, p2)
 
     assert p2 in Game.players(game)
   end
 
   test "removed player is not listed", %{p1: p1, p2: p2, game: game} do
-    game = game |> Game.add_player(p2) |> Game.remove_player(p1)
+    {_, game} = Game.add_player(game, p2)
+    game = Game.remove_player(game, p1)
 
     refute p1 in Game.players(game)
   end
 
+  # TODO(adam): add custom impl for test purposes
+  # test "fullness status", %{p2: p2, game: game} do
+  #   assert {:open, _} = Game.add_player(game, p2)
+  #   assert {:full, _} = Game.add_player(game, p3)
+  # end
+
   test "no players returns empty", %{p1: p1, p2: p2, game: game} do
-    game = game |> Game.add_player(p2) |> Game.remove_player(p1) |> Game.remove_player(p2)
+    {_, game} = Game.add_player(game, p2)
+    game = game |> Game.remove_player(p1) |> Game.remove_player(p2)
 
     assert game == :empty
   end
@@ -46,7 +54,7 @@ defmodule GameRoom.Game.TicTacToeTest do
   end
 
   test "cannot add a third player", %{p2: p2, p3: p3, game: game} do
-    game = Game.add_player(game, p2)
+    {_, game} = Game.add_player(game, p2)
 
     assert_raise CaseClauseError, fn -> Game.add_player(game, p3) end
   end
