@@ -9,4 +9,19 @@ defmodule GameRoom.Games do
       Map.update(games, module, count, &(&1 + count))
     end)
   end
+
+  def list_open_games(module \\ nil) do
+    module_match = if module, do: {:==, {:element, 1, :"$1"}, module}, else: true
+
+    Registry.select(GameRegistry, [
+      {
+        {:"$1", :"$2", :"$3"},
+        [
+          {:==, :"$3", :open},
+          module_match
+        ],
+        [{{:"$1", :"$2", :"$3"}}]
+      }
+    ])
+  end
 end
