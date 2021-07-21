@@ -1,6 +1,6 @@
 <div>
   <%= for game <- GameRoom.list_lobby_games() do %>
-    <p><%= game.display_name %> | <%= game.player_count %> | <%= game.module_name %></p>
+    <p><%= game.display_name %> | <%= game.player_count %> | <button phx-click="join" phx-value-module="<%= game.module_name %>">Join</button></p>
   <% end %>
 </div>
 

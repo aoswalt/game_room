@@ -7,6 +7,26 @@ defmodule GameRoomWeb.LobbyLive do
   end
 
   @impl true
+  def handle_event("join", data, socket) do
+    module = data["module"] |> String.to_existing_atom()
+    slug = module.slug()
+    user_id = socket.assigns.user_id
+    player = %GameRoom.Player{id: user_id}
+
+    game =
+      case GameRoom.Games.list_open_games(module) do
+        [] ->
+          GameRoom.GameInstance.start(module, player)
+
+        [{_key, pid, _status}] ->
+          GenServer.call(pid, {:add_player, player})
+          pid
+      end
+
+    {:noreply, push_redirect(socket, to: Routes.game_path(socket, :show, slug, 100))}
+  end
+
+  @impl true
   def handle_event("suggest", %{"q" => query}, socket) do
     {:noreply, assign(socket, results: search(query), query: query)}
   end

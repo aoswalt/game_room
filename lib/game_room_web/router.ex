@@ -21,7 +21,7 @@ defmodule GameRoomWeb.Router do
     pipe_through :browser
 
     live "/", LobbyLive, :index
-    # live "/:game/:id", GameLive
+    live "/:game/:id", GameLive, :show
   end
 
   # Other scopes may use custom stacks.

@@ -3,15 +3,13 @@ defmodule GameRoom.GameInstance do
 
   alias GameRoom.Game
 
-  def start_link({_game_type, _id} = key) do
-    alias GameRoom.Game.TicTacToe, as: TTT
-    alias GameRoom.Player, as: P
+  def start(game_type, player, game_id \\ :rand.uniform(1000)) do
+    game = game_type.new(player)
 
-    init = TTT.new(%P{id: 100})
-
+    key = {game_type, game_id}
     via = {GameRegistry, key, :open}
     name = {:via, Registry, via}
-    GenServer.start_link(__MODULE__, {key, init}, name: name)
+    GenServer.start(__MODULE__, {key, game}, name: name)
   end
 
   @impl true

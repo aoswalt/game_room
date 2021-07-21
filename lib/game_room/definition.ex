@@ -11,4 +11,9 @@ defmodule GameRoom.Definition do
   Get the UI-friendly display name for a game.
   """
   @callback display_name() :: String.t()
+
+  @doc """
+  Get the routable-friendly name for a game.
+  """
+  @callback slug() :: String.t()
 end

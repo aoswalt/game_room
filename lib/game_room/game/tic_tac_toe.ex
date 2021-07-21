@@ -18,6 +18,9 @@ defmodule GameRoom.Game.TicTacToe do
   @impl GameRoom.Definition
   def display_name(), do: "Tic Tac Toe"
 
+  @impl GameRoom.Definition
+  def slug(), do: "tic_tac_toe"
+
   @doc false
   # draw?
   def victor(%{board: board}) do

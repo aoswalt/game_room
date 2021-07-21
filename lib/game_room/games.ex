@@ -10,6 +10,10 @@ defmodule GameRoom.Games do
     end)
   end
 
+  def list_all_games() do
+    Registry.select(GameRegistry, [{{:"$1", :"$2", :"$3"}, [], [{{:"$1", :"$2", :"$3"}}]}])
+  end
+
   def list_open_games(module \\ nil) do
     module_match = if module, do: {:==, {:element, 1, :"$1"}, module}, else: true
 
