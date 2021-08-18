@@ -6,6 +6,8 @@ defmodule GameRoom.Application do
   use Application
 
   def start(_type, _args) do
+    store_game_slug_mapping()
+
     children = [
       # Start the Telemetry supervisor
       GameRoomWeb.Telemetry,
@@ -29,5 +31,15 @@ defmodule GameRoom.Application do
   def config_change(changed, _new, removed) do
     GameRoomWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  def store_game_slug_mapping() do
+    mapping =
+      for module <- GameRoom.list_game_modules(), into: %{} do
+        slug = module.slug()
+        {slug, module}
+      end
+
+    :persistent_term.put(:slug_mapping, mapping)
   end
 end
