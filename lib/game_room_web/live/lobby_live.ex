@@ -16,14 +16,17 @@ defmodule GameRoomWeb.LobbyLive do
     game =
       case GameRoom.Games.list_open_games(module) do
         [] ->
-          GameRoom.GameInstance.start(module, player)
+          {:ok, pid} = GameRoom.GameInstance.start(module, player)
+          pid
 
         [{_key, pid, _status}] ->
           GenServer.call(pid, {:add_player, player})
           pid
       end
 
-    {:noreply, push_redirect(socket, to: Routes.game_path(socket, :show, slug, 100))}
+    id = GenServer.call(game, :id)
+
+    {:noreply, push_redirect(socket, to: Routes.game_path(socket, :show, slug, id))}
   end
 
   @impl true

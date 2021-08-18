@@ -28,4 +28,9 @@ defmodule GameRoom.Games do
       }
     ])
   end
+
+  def get_game(module, id) do
+    [{pid, _value}] = Registry.lookup(GameRegistry, {module, id})
+    pid
+  end
 end

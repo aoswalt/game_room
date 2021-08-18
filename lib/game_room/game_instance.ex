@@ -34,4 +34,9 @@ defmodule GameRoom.GameInstance do
     Registry.update_value(GameRegistry, key, fn _ -> status end)
     {:reply, game, {key, game}}
   end
+
+  @impl true
+  def handle_call(:id, _, {{_module, id}, _game} = state) do
+    {:reply, id, state}
+  end
 end
