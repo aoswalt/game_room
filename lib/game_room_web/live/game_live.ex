@@ -8,7 +8,9 @@ defmodule GameRoomWeb.GameLive do
     socket = assign_defaults(session, socket)
     game_module = slug_to_module(slug)
 
-    game = GameRoom.Games.get_game(game_module, id)
+    # TODO(adam): clean up the player construction
+
+    game = GameRoom.Games.get_game(game_module, id, %GameRoom.Player{id: socket.assigns.user_id})
 
     socket = assign(socket, id: id, slug: slug, game_module: game_module, game_pid: game)
 

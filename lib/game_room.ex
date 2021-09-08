@@ -9,6 +9,7 @@ defmodule GameRoom do
 
   def list_lobby_games(get_player_counts \\ &GameRoom.Games.list_player_counts/0) do
     modules = list_game_modules()
+    # TODO(adam): need to be distinct on game type because of registry entry per player
     games = get_player_counts.()
 
     Enum.map(
