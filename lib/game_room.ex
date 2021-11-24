@@ -18,22 +18,8 @@ defmodule GameRoom do
     )
   end
 
-  if Mix.env() == :dev do
-    # NOTE(adam): Phoneix CodeReloader nukes protocols when reloading, so workaround
-    def list_game_modules() do
-      {:ok, modules} = :application.get_key(:game_room, :modules)
-
-      modules
-      |> Enum.map(&Atom.to_string/1)
-      |> Enum.filter(&(&1 =~ ~r/Elixir\.GameRoom\.Game\.\w+$/))
-      |> Enum.map(&String.to_existing_atom/1)
-    end
-  else
-    def list_game_modules() do
-      {:consolidated, impls} = GameRoom.Game.__protocol__(:impls)
-
-      impls
-    end
+  def list_game_modules() do
+    Application.fetch_env!(:game_room, :game_modules)
   end
 end
 

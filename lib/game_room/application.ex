@@ -6,6 +6,8 @@ defmodule GameRoom.Application do
   use Application
 
   def start(_type, _args) do
+    store_game_modules()
+
     store_game_slug_mapping()
 
     children = [
@@ -31,6 +33,12 @@ defmodule GameRoom.Application do
   def config_change(changed, _new, removed) do
     GameRoomWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  def store_game_modules() do
+    {:consolidated, impls} = GameRoom.Game.__protocol__(:impls)
+
+    Application.put_env(:game_room, :game_modules, impls)
   end
 
   def store_game_slug_mapping() do

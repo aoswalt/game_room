@@ -1,13 +1,5 @@
-# This file is responsible for configuring your application
-# and its dependencies with the aid of the Mix.Config module.
-#
-# This configuration file is loaded before any dependency and
-# is restricted to this project.
-
-# General application configuration
 use Mix.Config
 
-# Configures the endpoint
 config :game_room, GameRoomWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "3ssMhx8HdBwiUMnTmFlvgfForXGYk+EZdZ6x7o8yqYCV27FSpqN0z0fDWk5ukKcK",
@@ -15,12 +7,10 @@ config :game_room, GameRoomWeb.Endpoint,
   pubsub_server: GameRoom.PubSub,
   live_view: [signing_salt: "LsTSfUEQ"]
 
-# Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-# Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
 # Import environment specific config. This must remain at the bottom
