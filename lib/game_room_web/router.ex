@@ -17,18 +17,6 @@ defmodule GameRoomWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", GameRoomWeb do
-    pipe_through :browser
-
-    live "/", LobbyLive, :index
-    live "/:game/:id", GameLive, :show
-  end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", GameRoomWeb do
-  #   pipe_through :api
-  # end
-
   # Enables LiveDashboard only for development
   #
   # If you want to use the LiveDashboard in production, you should put
@@ -44,4 +32,16 @@ defmodule GameRoomWeb.Router do
       live_dashboard "/dashboard", metrics: GameRoomWeb.Telemetry
     end
   end
+
+  scope "/", GameRoomWeb do
+    pipe_through :browser
+
+    live "/", LobbyLive, :index
+    live "/:game/:id", GameLive, :show
+  end
+
+  # Other scopes may use custom stacks.
+  # scope "/api", GameRoomWeb do
+  #   pipe_through :api
+  # end
 end
